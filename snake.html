@@ -3,15 +3,112 @@
 <head>
 <style type="text/css">
 canvas{
+	display: block;
 	background: red;
 	margin:20px auto;
-	border:1px #ccc solid;
+	border-radius: 20px;
 }
 </style>
 <meta charset="utf-8">
 	<title>snake</title>
 </head>
 <body>
-<canvas width=1200 height=600></canvas>
+<canvas width=1200 height=600>
+	<span>当前浏览器不支持,请更换chrome或firefox</span>
+</canvas>
 </body>
+<script type="text/javascript">
+var cvs=document.getElementsByTagName('canvas')[0];
+var oc=cvs.getContext('2d');
+
+window.onload=function(){
+	var snake=new Snakes();	
+	snake.init();
+}
+
+function Snakes(){	
+	this.body=[];
+}
+
+Snakes.prototype.init=function(){
+	this.area=[];
+	for(var i=0;i<cvs.height/40;i++){		
+		for(var j=0;j<cvs.width/40;j++){
+			var posi={};					
+			posi.left=j*40+20;
+			posi.top=i*40+20;
+			this.area.push(posi);
+		}
+	}
+	oc.clearRect(0,0,oc.width,oc.height)
+
+	this.body[0]=this.area[0];
+
+	oc.beginPath();
+	oc.arc(this.body[0].left,this.body[0].top,20,0,2*Math.PI,true);
+	oc.fillStyle='blue';
+	oc.fill();
+	oc.closePath();
+
+	this.addfood();
+}
+
+Snakes.prototype.food=function(){
+	for(var i=0;i<this.body.length;i++){
+		var n=this.area.indexOf(this.body[i]);
+		this.area.splice(n,1);
+	}
+	this.food=this.area;
+}
+
+Snakes.prototype.addfood=function(){
+	this.food();
+	var ranm=Math.round(Math.random()*this.food.length);
+	
+	oc.beginPath();
+	oc.arc(this.food[ranm].left,this.food[ranm].top,15,0,2*Math.PI,true);
+	oc.fillStyle='green';
+	oc.fill();
+	oc.closePath();
+}
+
+Snakes.prototype.eat=function(){
+
+}
+
+Snakes.prototype.engine=function(){
+
+}
+
+Snakes.prototype.dir=function(e){
+	e=e||event;
+	switch(e.keyCode){
+		case 37:
+
+		break;
+		case 38:
+
+		break;
+		case 39:
+
+		break;
+		case 40:
+
+		break;
+		default:
+		return;
+	}
+}
+
+Snakes.prototype.forword=function(){
+
+}
+Snakes.prototype.next=function(){
+	
+}
+
+Snakes.prototype.css=function(obj,attr){
+	return obj.currentStyle?obj.currentStyle[attr]:getComputedStyle(obj)[attr];
+}
+</script>
 </html>
