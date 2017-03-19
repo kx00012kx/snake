@@ -28,9 +28,6 @@ window.onload=function(){
 
 function Snakes(){	
 	this.body=[];
-}
-
-Snakes.prototype.init=function(){
 	this.area=[];
 	for(var i=0;i<cvs.height/40;i++){		
 		for(var j=0;j<cvs.width/40;j++){
@@ -40,7 +37,17 @@ Snakes.prototype.init=function(){
 			this.area.push(posi);
 		}
 	}
-	oc.clearRect(0,0,oc.width,oc.height)
+	this.space=[];
+	for (var i=0;i<this.area.length;i++){
+		this.space[i]=this.space[i];
+	}
+}
+
+Snakes.prototype.init=function(){
+	
+	console.log(this.area[0])
+	console.log(this.area[30])
+	oc.clearRect(0,0,oc.width,oc.height);
 
 	this.body[0]=this.area[0];
 
@@ -53,7 +60,9 @@ Snakes.prototype.init=function(){
 	this.addfood();
 }
 
+
 Snakes.prototype.food=function(){
+	
 	for(var i=0;i<this.body.length;i++){
 		var n=this.area.indexOf(this.body[i]);
 		this.area.splice(n,1);
@@ -103,8 +112,8 @@ Snakes.prototype.dir=function(e){
 Snakes.prototype.forword=function(){
 
 }
-Snakes.prototype.next=function(){
-	
+Snakes.prototype.getNext=function(){
+
 }
 
 Snakes.prototype.css=function(obj,attr){
