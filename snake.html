@@ -46,27 +46,28 @@ function Snakes(){
 		this.space[i]=this.area[i];
 	}
 
-	this.wall=[];
+	this.leftWall=[];
+	this.rightWall=[];
 	for(var i=0;i<cvs.height/40;i++){
-		this.wall.push(this.area[i*cvs.width/40],this.area[i*cvs.width/40+29])
+		this.leftWall.push(this.space[i*cvs.width/40]);
+		this.rightWall.push(this.space[i*cvs.width/40+29]);
 	}
 }
 
 Snakes.prototype.init=function(){
 	var that=this;
-	oc.clearRect(0,0,oc.width,oc.height);
 
 	this.body[0]=this.area[0];
 	this.body[1]=this.area[1];
 	this.body[2]=this.area[2];
 	this.body[3]=this.area[3];
-
 	this.addfood();
-
 	this.draw();
-
 	document.onkeydown=function(e){
 		e=e||event;
+		if(that.nt==-1&&e.keyCode==39||that.nt==1&&e.keyCode==37||that.nt==30&&e.keyCode==38||that.nt==-30&&e.keyCode==40){
+			return;
+		}
 		that.dir(e);
 		if(37<=e.keyCode&&e.keyCode<=40){
 			return false;
@@ -83,14 +84,6 @@ Snakes.prototype.addfood=function(){
 
 	this.ranm=Math.round(Math.random()*this.pool.length);
 	this.food=this.pool[this.ranm];
-}
-
-Snakes.prototype.engine=function(){
-	var that=this;
-	clearInterval(this.tm);
-	this.tm=setInterval(function(){
-		that.forward();
-	},400)
 }
 
 Snakes.prototype.dir=function(e){
@@ -111,7 +104,15 @@ Snakes.prototype.dir=function(e){
 			this.nt=30;
 			this.engine();
 		break;
-	}
+	}	
+}
+
+Snakes.prototype.engine=function(){
+	var that=this;
+	clearInterval(this.tm);
+	this.tm=setInterval(function(){
+		that.forward();
+	},400)
 }
 
 Snakes.prototype.eat=function(){
@@ -125,9 +126,20 @@ Snakes.prototype.eat=function(){
 
 Snakes.prototype.forward=function(){
 	var NEXT=this.getNext();
-	if(NEXT==undefined){
+	if(NEXT==undefined||this.body.indexOf(NEXT)!==-1){
 		clearInterval(this.tm);
 		alert('you die!');
+		return;
+	}
+	if(this.leftWall.indexOf(this.body[this.body.length-1])!=-1&&this.nt==-1){
+		clearInterval(this.tm);
+		alert('you die!');
+		return;
+	}
+	if(this.rightWall.indexOf(this.body[this.body.length-1])!=-1&&this.nt==1){
+		clearInterval(this.tm);
+		alert('you die!');
+		return;
 	}
 	if(this.eat()){
 		this.body.push(this.getNext());
@@ -136,12 +148,10 @@ Snakes.prototype.forward=function(){
 		this.body.push(this.getNext());
 		this.body.shift();
 	}
-	this.draw();
-	
+	this.draw();	
 }
 
 Snakes.prototype.draw=function(){
-	console.log(this.body)
 	oc.clearRect(0,0,cvs.width,cvs.height);
 
 	oc.beginPath();
