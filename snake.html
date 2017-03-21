@@ -24,6 +24,9 @@ var oc=cvs.getContext('2d');
 window.onload=function(){
 	var snake=new Snakes();	
 	snake.init();
+	document.onclick=function(){
+		clearInterval(snake.tm);
+	}
 }
 
 function Snakes(){	
@@ -56,38 +59,36 @@ function Snakes(){
 
 Snakes.prototype.init=function(){
 	var that=this;
-
-	this.body[0]=this.area[0];
-	this.body[1]=this.area[1];
-	this.body[2]=this.area[2];
-	this.body[3]=this.area[3];
+	for(var i=0;i<5;i++){
+		this.body[i]=this.area.splice(0,1)[0];
+	}
 	this.addfood();
 	this.draw();
 	document.onkeydown=function(e){
 		e=e||event;
+		if(37<=e.keyCode&&e.keyCode<=40){
+			return false;
+		}
+	}
+	document.onkeyup=function(e){
+		console.time(1);
+		e=e||event;
+		var key=e.keyCode;
 		if(that.nt==-1&&e.keyCode==39||that.nt==1&&e.keyCode==37||that.nt==30&&e.keyCode==38||that.nt==-30&&e.keyCode==40){
 			return;
 		}
-		that.dir(e);
-		if(37<=e.keyCode&&e.keyCode<=40){
-			return false;
-		}	
+		that.dir(key);			
 	}	
 }
 
 Snakes.prototype.addfood=function(){
-	for(var i=0;i<this.body.length;i++){
-		var n=this.area.indexOf(this.body[i]);
-		this.area.splice(n,1);
-	}
-	this.pool=this.area;
-
-	this.ranm=Math.round(Math.random()*this.pool.length);
-	this.food=this.pool[this.ranm];
+	var ranm=Math.floor(Math.random()*this.area.length);
+	this.food=this.area[ranm];
+	console.log(this.food,this.area.length,ranm);
 }
 
-Snakes.prototype.dir=function(e){
-	switch(e.keyCode){
+Snakes.prototype.dir=function(key){
+	switch(key){
 		case 37:
 			this.nt=-1;
 			this.engine();
@@ -112,11 +113,11 @@ Snakes.prototype.engine=function(){
 	clearInterval(this.tm);
 	this.tm=setInterval(function(){
 		that.forward();
-	},400)
+	},150)
 }
 
 Snakes.prototype.eat=function(){
-	var next=this.getNext();
+	var next=this.getNext();	
 	if(this.food.left===next.left&&this.food.top===next.top){
 		return true;
 	}else{
@@ -142,12 +143,15 @@ Snakes.prototype.forward=function(){
 		return;
 	}
 	if(this.eat()){
-		this.body.push(this.getNext());
+		this.body.push(NEXT);
+		this.area.splice(this.area.indexOf(NEXT),1)
 		this.addfood();
 	}else{
-		this.body.push(this.getNext());
-		this.body.shift();
-	}
+		this.area.push(this.body[0]);
+		this.area.splice(this.area.indexOf(NEXT),1)
+		this.body.push(NEXT);
+		this.body.shift();		
+	}	
 	this.draw();	
 }
 
@@ -167,11 +171,11 @@ Snakes.prototype.draw=function(){
 		oc.fill();
 		oc.closePath();
 	}
+	console.timeEnd(1);
 }
 
-Snakes.prototype.getNext=function(){	
+Snakes.prototype.getNext=function(){
 	return this.space[this.space.indexOf(this.body[this.body.length-1])+this.nt];
 }
-
 </script>
 </html>
