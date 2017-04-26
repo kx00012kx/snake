@@ -4,7 +4,7 @@
 <style type="text/css">
 canvas{
 	display: block;
-	background: red;
+	border:2px dashed red ;
 	margin:20px auto;
 	border-radius: 20px;
 }
@@ -14,7 +14,7 @@ canvas{
 </head>
 <body>
 <canvas width=1200 height=600>
-	<span>当前浏览器不支持,请更换chrome或firefox</span>
+	<span>当前浏览器不支持,请更换chrome浏览器或firefox浏览器</span>
 </canvas>
 </body>
 <script type="text/javascript">
@@ -24,15 +24,16 @@ var oc=cvs.getContext('2d');
 window.onload=function(){
 	var snake=new Snakes();	
 	snake.init();
-	document.onclick=function(){
+	/*document.onclick=function(){
 		clearInterval(snake.tm);
-	}
+	}*/
 }
 
 function Snakes(){	
 	this.body=[];
 	this.nt=0;
 	this.tm=null;
+	this.pass=1;
 
 	this.area=[];
 	for(var i=0;i<cvs.height/40;i++){		
@@ -64,27 +65,32 @@ Snakes.prototype.init=function(){
 	}
 	this.addfood();
 	this.draw();
+
 	document.onkeydown=function(e){
 		e=e||event;
-		if(37<=e.keyCode&&e.keyCode<=40){
-			return false;
+		
+		if(that.pass){
+			that.pass=0;
+			//console.log(that.pass,e.keyCode)
+			
+			if(that.nt==-1&&e.keyCode==39||that.nt==1&&e.keyCode==37||that.nt==30&&e.keyCode==38||that.nt==-30&&e.keyCode==40){
+				return;
+			}
+			that.dir(e.keyCode);	
+		}else{
+			return ;
 		}
 	}
 	document.onkeyup=function(e){
-		console.time(1);
-		e=e||event;
-		var key=e.keyCode;
-		if(that.nt==-1&&e.keyCode==39||that.nt==1&&e.keyCode==37||that.nt==30&&e.keyCode==38||that.nt==-30&&e.keyCode==40){
-			return;
-		}
-		that.dir(key);			
+		//console.time(1);
+		that.pass=1;
 	}	
 }
 
 Snakes.prototype.addfood=function(){
 	var ranm=Math.floor(Math.random()*this.area.length);
 	this.food=this.area[ranm];
-	console.log(this.food,this.area.length,ranm);
+	//console.log(this.food,this.area.length,ranm);
 }
 
 Snakes.prototype.dir=function(key){
@@ -129,17 +135,17 @@ Snakes.prototype.forward=function(){
 	var NEXT=this.getNext();
 	if(NEXT==undefined||this.body.indexOf(NEXT)!==-1){
 		clearInterval(this.tm);
-		alert('you die!');
+		alert('snake die!');
 		return;
 	}
 	if(this.leftWall.indexOf(this.body[this.body.length-1])!=-1&&this.nt==-1){
 		clearInterval(this.tm);
-		alert('you die!');
+		alert('snake die!');
 		return;
 	}
 	if(this.rightWall.indexOf(this.body[this.body.length-1])!=-1&&this.nt==1){
 		clearInterval(this.tm);
-		alert('you die!');
+		alert('snake die!');
 		return;
 	}
 	if(this.eat()){
@@ -160,18 +166,18 @@ Snakes.prototype.draw=function(){
 
 	oc.beginPath();
 	oc.arc(this.food.left,this.food.top,15,0,2*Math.PI,true);
-	oc.fillStyle='green';
+	oc.fillStyle='red';
 	oc.fill();
 	oc.closePath();	
 
 	for(var i=0;i<this.body.length;i++){
 		oc.beginPath();
 		oc.arc(this.body[i].left,this.body[i].top,20,0,2*Math.PI,true);
-		oc.fillStyle='blue';
+		oc.fillStyle='#f06';
 		oc.fill();
 		oc.closePath();
 	}
-	console.timeEnd(1);
+	//console.timeEnd(1);
 }
 
 Snakes.prototype.getNext=function(){
